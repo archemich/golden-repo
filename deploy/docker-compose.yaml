@@ -1,0 +1,13 @@
+services:
+  api:
+    build: ../src/api
+    expose: ["8000"]
+
+  webui:
+    build: ../src/webui
+    ports: ["8501:8501"]
+    depends_on: ["api"]
+    links:
+      - "api:api"
+    environment:
+      - API_URL=http://api:8000

@@ -3,15 +3,15 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: pylint
+        entry: uv run pylint
         language: system
         types: [ python ]
         require_serial: true
         args: [ "--rcfile=pyproject.toml" ]
 
       - id: mypy
-        name: pylint
-        entry: pylint
+        name: mypy
+        entry: uv run mypy
         language: system
         types: [ python ]
 #  - repo: https://github.com/pre-commit/mirrors-mypy
