@@ -1,8 +1,11 @@
+import asyncio
 import logging
 
+import aio_pika
 import psycopg2
 import uvicorn
 from fastapi import FastAPI
+from golden.microservice_schemas import PaymentsModel
 
 from .configuration import Configuration
 
@@ -19,12 +22,27 @@ async def root() -> dict[str, str]:
 
 @app.get("/pay")
 async def pay() -> dict[str, str]:
-    with conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                'INSERT INTO payments (amount) VALUES (%(int)s);',
-                {'int': 299}
-            )
+    loop = asyncio.get_event_loop()
+    connection = await aio_pika.connect_robust(
+        config.rabbitmq_url, loop=loop
+    )
+
+    channel: aio_pika.abc.AbstractChannel = await connection.channel()
+
+    data = PaymentsModel(
+        user='user',
+        amount='299'
+    )
+
+    await channel.default_exchange.publish(
+        aio_pika.Message(
+            body=data.model_dump_json().encode()
+        ),
+        routing_key=config.payments_queue_name
+    )
+
+    await connection.close()
+
     return {"message": "success"}
 
 
@@ -38,8 +56,9 @@ async def get_payments() -> dict:
             res = cur.fetchall()
 
     d =  {'data': res, 'columns': ['id', 'pay_amount', 'date']}
-    print(d)
     return d
+
+
 
 
 def main() -> None:

@@ -1,7 +1,12 @@
+# It is supposed to be launch from src/ folder.
+
 FROM python:3.13-slim
 
-WORKDIR /api
-COPY . .
+WORKDIR /app
+COPY shared/ /app/shared
+
+WORKDIR /app/api
+COPY api/ .
 RUN pip install uv
 
 EXPOSE 8000

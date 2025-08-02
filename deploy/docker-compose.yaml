@@ -1,15 +1,38 @@
 services:
   api:
-    build: ../src/api
+    build:
+      context: ../src
+      dockerfile: ../src/api/Dockerfile
+    restart: "on-failure"
     expose: ["8000"]
     environment:
       DB_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-appdb}"
+      PAYMENTS_QUEUE_NAME: "payments_queue"
+      RABBITMQ_URL: "amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/"
+
+    depends_on: ['rabbitmq']
+
+  payments:
+    build:
+      context: ../src
+      dockerfile: ../src/payments/Dockerfile
+    restart: "on-failure"
+    environment:
+      DB_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-appdb}"
+      PAYMENTS_QUEUE_NAME: "payments_queue"
+      RABBITMQ_URL: "amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/"
+
     depends_on:
       postgres:
         condition: service_healthy
+      rabbitmq:
+        condition: service_started
 
   webui:
-    build: ../src/webui
+    build:
+      context: ../src
+      dockerfile: ../src/webui/Dockerfile
+    restart: "on-failure"
     ports: ["8501:8501"]
     depends_on: ["api"]
     links:
@@ -32,5 +55,17 @@ services:
       timeout: 5s
       retries: 5
 
+  rabbitmq:
+    image: rabbitmq:3.13.7-management-alpine
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   postgres_data:
+  rabbitmq_data:

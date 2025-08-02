@@ -1,5 +1,5 @@
 [project]
-name = "golden-payments"
+name = "golden-microservice-schemas"
 version = "0.1.0"
 description = "API for interaction with the system"
 readme = "README.md"
@@ -13,23 +13,14 @@ maintainers = [
 
 requires-python = ">=3.13"
 dependencies = [
-    "aio-pika>=9.5.5",
-    "golden-microservice-schemas",
-    "psycopg2-binary>=2.9.10",
-    "pydantic-settings>=2.10.1"
+    "pydantic"
 ]
-
-[project.scripts]
-golden-payments = "golden.payments.main:main"
 
 [build-system]
 requires = ["uv_build>=0.8.4,<0.9.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = "golden.payments"
+module-name = "golden.microservice_schemas"
 module-root = ""
 namespace = true
-
-[tool.uv.sources]
-golden-microservice-schemas = { path = "../shared/microservices_schemas" }

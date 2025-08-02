@@ -16,7 +16,10 @@ dependencies = [
     "fastapi[all]>=0.116.1",
     "numpy>=2.3.2",
     "uvicorn>=0.35.0",
-    "psycopg2-binary>=2.9.10"
+    "aio-pika>=9.5.5",
+    "psycopg2-binary>=2.9.10",
+    "pydantic-settings>=2.10.1",
+    "golden-microservice-schemas",
 ]
 
 [project.scripts]
@@ -30,3 +33,6 @@ build-backend = "uv_build"
 module-name = "golden.api"
 module-root = ""
 namespace = true
+
+[tool.uv.sources]
+golden-microservice-schemas = { path = "../shared/microservices_schemas" }
