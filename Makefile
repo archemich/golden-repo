@@ -1,5 +1,11 @@
+FLAGS :=
+
+ifdef BUILD
+	FLAGS += --build
+endif
+
 up:
-	docker-compose -f ./deploy/docker-compose.yaml up -d
+	docker-compose -f ./deploy/docker-compose.yaml up -d $(FLAGS)
 
 down:
 	docker-compose  -f ./deploy/docker-compose.yaml down

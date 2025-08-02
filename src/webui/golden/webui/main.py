@@ -33,7 +33,6 @@ def get_data() -> Any:
         return {'data':[], 'columns':[]}
 
 json = get_data()
-print(json)
 df = pd.DataFrame(json['data'], columns=json['columns'])
 
 st.dataframe(df)
