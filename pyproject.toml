@@ -1,0 +1,63 @@
+# """
+# Root pyproject.toml is used for brief describing the whole system.
+# Also is used for setting up tools.
+# """
+
+## Project metadata
+
+[project]
+name = "golden-repo"
+description = """
+Root pyproject.toml for Golden Repo.
+This repo is demonstration of properly set up repository.
+In the future, we intend to utilize this repository as a monorepository with a microservices architecture.
+This approach aims to ensure fault tolerance, scalability and cost-effective maintenance for medium-sized projects
+when it is being developed by a single team.
+"""
+readme = "README.md"
+authors = [
+    {name = "Neprin Team"}
+]
+maintainers = [
+    {name = "Mikhail Neprin", email = "archemich@gmail.com"}
+]
+
+version="v1.0.0"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[all]>=0.116.1",
+]
+
+[dependency-groups]
+dev = [
+    "pydocstyle[toml]",
+    "pylint",
+    "mypy",
+    "pre-commit"
+]
+
+#####################################################################
+
+
+## Tools settings
+### PyLint
+
+[tool.pylint.main]
+ignore = [".venv", ".git", "__pycache__", "docs", "third_party"]
+
+[tool.pylint.format]
+max-line-length = 120
+
+
+### Pydocstyle
+
+[tool.pydocstyle]
+convention = "google"
+
+
+### Mypy
+
+[tool.mypy]
+strict = true
+
+
